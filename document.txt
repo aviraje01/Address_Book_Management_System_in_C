@@ -1,0 +1,156 @@
+1. MAIN MENU (main.c)
+--------------------------------------------------------------------------------
+An AddressBook variable is created in main() and initialize() is called to load
+the saved contacts. After that the menu is shown repeatedly in an infinite loop
+until the user chooses Exit.
+
+    1. Create contact      -> createContact()
+    2. Search contact      -> searchContact()
+    3. Edit contact        -> editContact()
+    4. Delete contact      -> deleteContact()
+    5. List all contacts   -> listContacts()
+    6. Exit                -> saveAndExit()
+
+Any other number prints "Invalid choice. Please try again."
+
+
+2. FUNCTIONS (contact.c)
+--------------------------------------------------------------------------------
+
+2.1 File handling functions
+
+initialize(AddressBook *addressBook)
+    Sets contactCount to 0 and opens contacts.txt in read mode. It reads each
+    line (name, phone, email) into the contacts array and increases
+    contactCount. If the file cannot be opened it prints "Error" and returns.
+
+saveAndExit(AddressBook *addressBook)
+    Opens contacts.txt in write mode and writes every contact in the format
+    "name, phone, email", one per line. Then closes the file and ends the
+    program using exit(0). The data is saved only when the user chooses
+    option 6 (Exit) from the main menu.
+
+
+2.2 Display function
+
+listContacts(AddressBook *addressBook)
+    Prints all contacts in a table with the columns Sr.no, Name, Phone No.
+    and Email ID.
+
+
+2.3 Duplicate checking functions
+    These return 0 if the value is already present and 1 if it is not present.
+
+checknamepresent()    Compares the name with the saved names, ignoring upper or
+                      lower case. Counts as present only when the whole name
+                      matches (same length).
+checkphonepresent()   Checks whether the same phone number already exists.
+checkemailpresent()   Checks whether the same email ID already exists.
+
+
+2.4 Validation functions
+    These return 1 if the value is valid and 0 if it is not valid.
+
+checknamevalid()
+    Name is valid only if it contains alphabets and spaces.
+
+checkphonevalid()
+    Phone number is valid only if it contains digits only and is not longer
+    than 10 digits.
+
+checkemailvalid()
+    Email ID is valid only if:
+      - it has no capital letters
+      - it contains the '@' symbol, and '@' is not the first character
+      - the character before '@' is a letter or a digit
+      - the part after '@' is exactly "gmail.com"
+
+
+2.5 Input functions (used by create and edit)
+    addname(), addphone() and addemail() each take the contact's position (i)
+    in the array. Each one asks the user to enter the value, first checks
+    whether it is already present, then checks whether it is valid. If it
+    passes both checks it is stored in the contact. The user gets 3 chances for
+    each field, and an error message showing the remaining chances is printed
+    for every wrong attempt.
+
+
+2.6 Create
+
+createContact()
+    Uses the next free position in the array and calls addname(), addphone()
+    and addemail(). Then increases contactCount and prints
+    "Successfully Contact Added..!!".
+
+
+2.7 Search
+
+searchmenu()
+    Shows the search menu and returns the user's choice:
+      1. Search By Name
+      2. Search By Phone No.
+      3. Search By Email ID
+      4. Exit
+
+searchContact()
+    Calls searchmenu(), asks for the text to search and calls the matching
+    print function.
+
+printsearchbyname(), printsearchbyphone(), printsearchbyemail()
+    Search is a partial match and is not case sensitive, so part of a name,
+    number or email is enough. All matching contacts are printed in a table
+    with a new serial number (1, 2, 3 ...). If nothing matches, "Not Found" is
+    printed.
+
+
+2.8 Finding the position of a searched contact
+
+findnameindex(), findphoneindex(), findemailindex()
+    Take the search text and the serial number chosen by the user from the
+    search result table. They return the actual position of that contact in
+    the contacts array.
+
+
+2.9 Edit
+
+editmenu()
+    Shows the edit menu and returns the user's choice:
+      1. Edit Name
+      2. Edit Phone No.
+      3. Edit Email ID
+      4. Edit ALL
+      5. Exit
+
+editmenucase()
+    Performs the chosen edit on the selected contact using addname(),
+    addphone() and addemail(), and prints a success message such as
+    "Edit Name Successfully..!!".
+
+editContact()
+    Uses the search menu to search by name, phone or email, shows the matching
+    contacts, asks for the serial number of the contact to edit, finds its
+    position, and then calls editmenu() and editmenucase().
+
+
+2.10 Delete
+
+removecontact()
+    Removes the contact at the given position by moving the following
+    contacts one place up, then decreases contactCount and prints
+    "Successfully Removed Contact..!!".
+
+deleteContact()
+    Uses the search menu to search by name, phone or email, shows the matching
+    contacts, asks for the serial number of the contact to delete, shows the
+    selected contact and asks for confirmation (Y/N). The contact is removed
+    only if the user enters Y or y.
+
+
+3. PROGRAM FLOW
+--------------------------------------------------------------------------------
+1. Program starts and initialize() loads contacts from contacts.txt.
+2. The main menu is displayed and the user selects an option.
+3. The selected operation is performed on the contacts stored in memory.
+4. The menu is displayed again until the user selects Exit.
+5. On Exit, saveAndExit() writes all contacts back to contacts.txt and the
+   program ends.
